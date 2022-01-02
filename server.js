@@ -20,20 +20,20 @@ function send404(response){
 function sendFile(response, filePath, fileContents) {
     response.writeHead(
         200,
-        {"content-type": mime.lookup(path.basename(filePath))}
+        {"content-type": mime.getType(path.basename(filePath))}
     );
     response.end(fileContents);
 }
 
 // helper function serving static files
-function serveStatic(response, cache, absPath){
-    if(cache[absPath]){
+function serveStatic(response, cache, absPath) {
+    if(cache[absPath]) {
         sendFile(response, absPath, cache[absPath]);
     } else {
         fs.exists(absPath, function(exists){
-            if(exists){
-                fs.readFile(absPath, function(err, data){
-                    if(err){
+            if (exists) {
+                fs.readFile(absPath, function(err, data) {
+                    if (err) {
                         send404(response);
                     } else {
                         cache[absPath] = data;
@@ -66,3 +66,6 @@ var server = http.createServer(function(request, response){
 server.listen(3000, function(){
     console.log("server listening on port 3000.");
 })
+
+var chatServer = require('.lib/chat_server');
+chatServer.listen(server);
